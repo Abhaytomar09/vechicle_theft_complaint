@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Theft Complaint System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <h2>🚗 Vehicle Theft Complaint System</h2>
+                </div>
+                <div class="nav-menu" id="navMenu">
+                    <a href="#" class="nav-link" onclick="showPage('home')">Home</a>
+                    <a href="#" class="nav-link" id="loginLink" onclick="showPage('login')">Login</a>
+                    <a href="#" class="nav-link" id="registerLink" onclick="showPage('register')">Register</a>
+                    <a href="#" class="nav-link" id="dashboardLink" style="display: none;" onclick="showPage('dashboard')">Dashboard</a>
+                    <a href="#" class="nav-link" id="complaintLink" style="display: none;" onclick="showPage('complaint')">File Complaint</a>
+                    <a href="#" class="nav-link" id="adminLink" style="display: none;" onclick="showPage('admin')">Admin</a>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <div class="container">
+                    <h1>Report Vehicle Theft Online</h1>
+                    <p>Quick and secure way to file vehicle theft complaints</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="showPage('register')">Get Started</button>
+                        <button class="btn btn-secondary" onclick="showPage('login')">Login</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="container">
+                    <h2>Features</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">📝</div>
+                            <h3>Easy Complaint Filing</h3>
+                            <p>Submit your vehicle theft complaint online with ease</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3>Track Your Case</h3>
+                            <p>Monitor the status of your complaint in real-time</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔒</div>
+                            <h3>Secure & Private</h3>
+                            <p>Your information is kept secure and confidential</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📱</div>
+                            <h3>Document Upload</h3>
+                            <p>Upload supporting documents and photos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="login" class="page">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>Login</h2>
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        <p class="auth-link">Don't have an account? <a href="#" onclick="showPage('register')">Register here</a></p>
+                    </form>
+                    <div id="loginError" class="error-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Page -->
+        <div id="register" class="page">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>Register</h2>
+                    <form id="registerForm" onsubmit="handleRegister(event)">
+                        <div class="form-group">
+                            <label for="registerName">Full Name</label>
+                            <input type="text" id="registerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email</label>
+                            <input type="email" id="registerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPhone">Phone Number</label>
+                            <input type="tel" id="registerPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" id="registerPassword" required minlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        <p class="auth-link">Already have an account? <a href="#" onclick="showPage('login')">Login here</a></p>
+                    </form>
+                    <div id="registerError" class="error-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page">
+            <div class="container">
+                <h1>My Complaints</h1>
+                <div class="dashboard-controls">
+                    <input type="text" id="searchInput" placeholder="Search by vehicle number or case number..." class="search-input">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="under_investigation">Under Investigation</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="showPage('complaint')">File New Complaint</button>
+                </div>
+                <div id="complaintsList" class="complaints-list"></div>
+            </div>
+        </div>
+
+        <!-- Complaint Form Page -->
+        <div id="complaint" class="page">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1>File Vehicle Theft Complaint</h1>
+                    <div class="filing-mode-toggle">
+                        <button id="formModeBtn" class="mode-btn active" onclick="switchFilingMode('form')">📝 Form</button>
+                        <button id="chatbotModeBtn" class="mode-btn" onclick="switchFilingMode('chatbot')">🤖 Chatbot</button>
+                    </div>
+                </div>
+
+                <!-- Form Mode -->
+                <div id="formMode" class="filing-mode">
+                <form id="complaintForm" class="complaint-form" onsubmit="handleComplaintSubmit(event)">
+                    <div class="form-section">
+                        <h3>Vehicle Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vehicleNumber">Vehicle Registration Number *</label>
+                                <input type="text" id="vehicleNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vehicleType">Vehicle Type *</label>
+                                <select id="vehicleType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="car">Car</option>
+                                    <option value="motorcycle">Motorcycle</option>
+                                    <option value="scooter">Scooter</option>
+                                    <option value="bicycle">Bicycle</option>
+                                    <option value="truck">Truck</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vehicleModel">Vehicle Model *</label>
+                                <input type="text" id="vehicleModel" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vehicleColor">Vehicle Color *</label>
+                                <input type="text" id="vehicleColor" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Theft Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="theftDate">Date of Theft *</label>
+                                <input type="datetime-local" id="theftDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="theftLocation">Location of Theft *</label>
+                                <input type="text" id="theftLocation" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Additional Description</label>
+                            <textarea id="description" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Complainant Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="complainantName">Full Name *</label>
+                                <input type="text" id="complainantName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="complainantPhone">Phone Number *</label>
+                                <input type="tel" id="complainantPhone" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="complainantEmail">Email *</label>
+                                <input type="email" id="complainantEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="complainantAddress">Address</label>
+                                <textarea id="complainantAddress" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Supporting Documents</h3>
+                        <div class="form-group">
+                            <label for="documents">Upload Documents (Photos, RC Book, etc.) - Max 5 files</label>
+                            <input type="file" id="documents" multiple accept="image/*,.pdf,.doc,.docx">
+                            <small>Supported formats: JPG, PNG, PDF, DOC, DOCX (Max 10MB per file)</small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Submit Complaint</button>
+                        <button type="button" class="btn btn-secondary" onclick="showPage('dashboard')">Cancel</button>
+                    </div>
+                    <div id="complaintError" class="error-message"></div>
+                </form>
+                </div>
+
+                <!-- Chatbot Mode -->
+                <div id="chatbotMode" class="filing-mode" style="display: none;">
+                    <div class="chatbot-container">
+                        <div class="chatbot-header">
+                            <div class="chatbot-title">
+                                <span class="chatbot-icon">🤖</span>
+                                <h3>AI Complaint Assistant</h3>
+                            </div>
+                            <button class="chatbot-close" onclick="resetChatbot()">Reset</button>
+                        </div>
+                        <div id="chatbotMessages" class="chatbot-messages">
+                            <div class="message bot-message">
+                                <div class="message-content">
+                                    <p>Hello! 👋 I'm here to help you file a vehicle theft complaint. I can also help you track your existing complaints.</p>
+                                    <p>What would you like to do?</p>
+                                    <div class="quick-options">
+                                        <button class="quick-option-btn" onclick="chatbotStartFiling()">File New Complaint</button>
+                                        <button class="quick-option-btn" onclick="chatbotStartTracking()">Track Complaint Status</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chatbot-input-area">
+                            <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Type your message..." onkeypress="handleChatbotKeyPress(event)">
+                            <button id="chatbotSendBtn" class="chatbot-send-btn" onclick="sendChatbotMessage()">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complaint Detail Page -->
+        <div id="complaintDetail" class="page">
+            <div class="container">
+                <button class="btn btn-secondary" onclick="showPage('dashboard')">← Back to Dashboard</button>
+                <div id="complaintDetailContent"></div>
+            </div>
+        </div>
+
+        <!-- Admin Page -->
+        <div id="admin" class="page">
+            <div class="container">
+                <h1>Admin Dashboard</h1>
+                <div class="dashboard-controls">
+                    <input type="text" id="adminSearchInput" placeholder="Search by vehicle number or case number..." class="search-input">
+                    <select id="adminStatusFilter" class="filter-select">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="under_investigation">Under Investigation</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+                <div id="adminComplaintsList" class="complaints-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
